@@ -47,14 +47,14 @@ yum update -y
 # chmod -R 777 $DATA_DIRECTORY
 
 # install storage server
-(echo $MANAGEMENT_NODE; echo $STORAGE_SERVICE_ID; echo $STORAGE_TARGET_ID) | curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/storage-install.sh
-bash storage-install.sh
+curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/storage-install.sh
+(echo $MANAGEMENT_NODE; echo $STORAGE_SERVICE_ID; echo $STORAGE_TARGET_ID) | bash storage-install.sh
 rm storage-install.sh
 /etc/init.d/beegfs-storage status
 
 # install client server
-(echo $MANAGEMENT_NODE; echo $KERNEL_MODULE_AUTOBUILD; echo N) | curl -o client-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/client-install.sh
-bash client-install.sh
+curl -o client-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/client-install.sh
+(echo $MANAGEMENT_NODE; echo $KERNEL_MODULE_AUTOBUILD; echo N) | bash client-install.sh
 rm client-install.sh
 /etc/init.d/beegfs-client status
 /etc/init.d/beegfs-helperd status
@@ -65,7 +65,7 @@ if [ $RESTART_NEW ]; then
     RESTART=$RESTART_NEW
 fi
 if [ ${RESTART,,}=y ]; then
-    restart
+    reboot
 fi
 
 else # not run as root
