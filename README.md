@@ -11,3 +11,14 @@ Duplicity keeps the storage volumes in the stack safely backed up.
 Rancher is the orchastration platform. It is used to maintain a scalable and highly availble platform.
 ### [Docker](https://www.docker.com/)
 Docker is the contianer engine. Any application packaged as a docker container can be run on the stack.
+
+## Install
+### Master
+```sh
+curl -o master.sh https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/master.sh && sudo bash master.sh
+```
+
+### Node
+```sh
+curl -o node.sh https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/node.sh && sudo bash node.sh
+```
