@@ -84,19 +84,19 @@ docker run -d --restart=unless-stopped --link rancherdb:mysql \
 curl -o management-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/management-install.sh
 bash management-install.sh
 rm management-install.sh
-/etc/init.d/beegfs-mgmtd start
+/etc/init.d/beegfs-mgmtd status
 
 # beegfs metadata server
 curl -o metadata-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/metadata-install.sh
 (echo $MANAGEMENT_NODE; echo $METADATA_SERVICE_ID) | bash metadata-install.sh
 rm metadata-install.sh
-/etc/init.d/beegfs-meta start
+/etc/init.d/beegfs-meta status
 
 # beegfs admon server
 curl -o admon-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/admon-install.sh
 (echo $MANAGEMENT_NODE) | bash admon-install.sh
 rm admon-install.sh
-/etc/init.d/beegfs-admon start
+/etc/init.d/beegfs-admon status
 
 else # not run as root
     echo "this program must be run as root"
