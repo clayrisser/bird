@@ -5,7 +5,10 @@ RANCHER_MYSQL_DATABASE=rancher
 MYSQL_PASSWORD=hellodocker
 RANCHER_DOMAIN=cloud.yourdomain.com
 MANAGEMENT_NODE=node01
-METADATA_SERVICE_ID=2
+METADATA_SERVICE_ID=1
+BACKUP_CRON="0 0 * * *"
+DUPLICITY_BACKEND="gs://mygooglebucket"
+QUIET_PERIOD=60
 
 if [ $(whoami) = "root" ]; then # if run as root
 
@@ -34,6 +37,18 @@ read -p "Metadata Service ID ($METADATA_SERVICE_ID): " METADATA_SERVICE_ID_NEW
 if [ $METADATA_SERVICE_ID_NEW ]; then
     METADATA_SERVICE_ID=$METADATA_SERVICE_ID_NEW
 fi
+read -p "Backup Cron ($BACKUP_CRON): " BACKUP_CRON_NEW
+if [ $BACKUP_CRON_NEW ]; then
+    BACKUP_CRON=$BACKUP_CRON_NEW
+fi
+read -p "Duplicity Backend ($DUPLICITY_BACKEND): " DUPLICITY_BACKEND_NEW
+if [ $DUPLICITY_BACKEND_NEW ]; then
+    DUPLICITY_BACKEND=$DUPLICITY_BACKEND_NEW
+fi
+read -p "Quiet Period ($QUIET_PERIOD): " QUIET_PERIOD_NEW
+if [ $QUIET_PERIOD_NEW ]; then
+    QUIET_PERIOD=$QUIET_PERIOD_NEW
+fi
 
 # prepare system
 yum update -y
@@ -45,6 +60,13 @@ systemctl start docker
 systemctl status docker
 systemctl enable docker
 docker run hello-world
+
+# install backup agent
+docker run -d --restart=unless-stopeed \
+       -v /exports/backup/mysql:/var/backup/mysql \
+       -v /exports/certs:/var/backup/certs \
+       --privileged --rm \
+       yaronr/backup-volume-container $DUPLICITY_BACKEND $QUIET_PERIOD
 
 # install nginx
 docker run -d --name nginx --restart=unless-stopped -p 80:80 -p 443:443 \
@@ -66,6 +88,18 @@ docker run -d --name rancherdb --restart=unless-stopped \
        -e MYSQL_DATABASE=$RANCHER_MYSQL_DATABASE \
        -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD \
        mariadb:latest
+
+# install mysql backup
+docker run -d --restart=unless-stopped --link rancherdb:mysql \
+       -v /backup/mysql:/backup \
+       -e MYSQL_HOST=mysql \
+       -e MYSQL_PORT=27017 \
+       -e MYSQL_USER=root \
+       -e MYSQL_PASS=$MYSQL_PASSWORD \
+       -e MYSQL_DB=$RANCHER_MYSQL_DATABASE \
+       -e CRON_TIME=$BACKUP_CRON \
+       -e MAX_BACKUPS=1 \
+       tutum/mysql-backup
 
 # install rancher
 docker run -d --restart=unless-stopped --link rancherdb:mysql \
