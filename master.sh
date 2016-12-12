@@ -7,8 +7,9 @@ RANCHER_DOMAIN=cloud.yourdomain.com
 MANAGEMENT_NODE=node01
 METADATA_SERVICE_ID=1
 BACKUP_CRON="0 0 * * *"
-DUPLICITY_BACKEND="gs://mygooglebucket"
-QUIET_PERIOD=60
+GC_BUCKET="imabucket/backup"
+GC_ACCESS_KEY="imanaccesskey"
+GC_SECRET_KEY="imasecretkey"
 
 if [ $(whoami) = "root" ]; then # if run as root
 
@@ -41,13 +42,17 @@ read -p "Backup Cron ($BACKUP_CRON): " BACKUP_CRON_NEW
 if [ "$BACKUP_CRON_NEW" ]; then
     BACKUP_CRON=$BACKUP_CRON_NEW
 fi
-read -p "Duplicity Backend ($DUPLICITY_BACKEND): " DUPLICITY_BACKEND_NEW
-if [ "$DUPLICITY_BACKEND_NEW" ]; then
-    DUPLICITY_BACKEND=$DUPLICITY_BACKEND_NEW
+read -p "Google Cloud Bucket ($GC_BUCKET): " GC_BUCKET_NEW
+if [ "$GC_BUCKET_NEW" ]; then
+    GC_BUCKET=$GC_BUCKET_NEW
 fi
-read -p "Quiet Period ($QUIET_PERIOD): " QUIET_PERIOD_NEW
-if [ "$QUIET_PERIOD_NEW" ]; then
-    QUIET_PERIOD=$QUIET_PERIOD_NEW
+read -p "Google Cloud Access Key ($GC_ACCESS_KEY): " GC_ACCESS_KEY_NEW
+if [ "$GC_ACCESS_KEY_NEW" ]; then
+    GC_ACCESS_KEY=$GC_ACCESS_KEY_NEW
+fi
+read -p "Google Secret Access Key ($GC_SECRET_KEY): " GC_SECRET_KEY_NEW
+if [ "$GC_SECRET_KEY_NEW" ]; then
+    GC_SECRET_KEY=$GC_SECRET_KEY_NEW
 fi
 
 # prepare system
@@ -61,12 +66,17 @@ systemctl status docker
 systemctl enable docker
 docker run hello-world
 
-# install conplicity cron
-docker run --name backup -ti --detach \
-       -v /var/run/docker.sock:/var/run/docker.sock:ro \
-       -e AWS_ACCESS_KEY_ID=<key_id> \
-       -e CONPLICITY_CRON_SCHEDULE="$BACKUP_CRON" \
-       bkendinibilir/conplicity-cron
+# install duplicity
+docker run -d --name duplicity --restart=always \
+       --privileged=true \
+       -v /exports/certs:/var/backup/certs \
+       -v /exports/backup/mysql:/var/backup/backup/mysql \
+       -e CRON_SCHEDULE="$BACKUP_CRON" \
+       -e GS_ACCESS_KEY_ID=$GC_ACCESS_KEY \
+       -e GS_SECRET_ACCESS_KEY=$GC_SECRET_KEY \
+       -e DEST_GS=$GC_BUCKET \
+       -e ALLOW_SOURCE_MISMATCH="yes" \
+       lagun4ik/docker-backup
 
 # install nginx
 docker run -d --name nginx --restart=always -p 80:80 -p 443:443 \
