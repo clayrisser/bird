@@ -65,7 +65,7 @@ docker run hello-world
 docker run -d --name backup \
        -v /exports/backup/mysql:/var/backup/mysql \
        -v /exports/certs:/var/backup/certs \
-       --privileged --rm \
+       --privileged \
        yaronr/backup-volume-container $DUPLICITY_BACKEND "$QUIET_PERIOD"
 
 # install nginx
