@@ -58,7 +58,7 @@ docker run -d --restart=unless-stopped \
        -v /exports/certs:/etc/nginx/certs:rw \
        --volumes-from nginx-proxy \
        -v /var/run/docker.sock:/var/run/docker.sock:ro \
-       jrcs/letsencrypt-nginx-proxy-companion
+       thomastweets/docker-letsencrypt-nginx-proxy-companion
 
 # install mariadb
 docker run -d --name rancherdb --restart=unless-stopped \
