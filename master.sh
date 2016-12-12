@@ -62,7 +62,7 @@ systemctl enable docker
 docker run hello-world
 
 # install backup agent
-docker run -d --restart=unless-stopeed \
+docker run -d --name backup \
        -v /exports/backup/mysql:/var/backup/mysql \
        -v /exports/certs:/var/backup/certs \
        --privileged --rm \
@@ -90,7 +90,7 @@ docker run -d --name rancherdb --restart=unless-stopped \
        mariadb:latest
 
 # install mysql backup
-docker run -d --restart=unless-stopped --link rancherdb:mysql \
+docker run -d --name mysql-backup --restart=unless-stopped --link rancherdb:mysql \
        -v /backup/mysql:/backup \
        -e MYSQL_HOST=mysql \
        -e MYSQL_PORT=27017 \
@@ -99,10 +99,11 @@ docker run -d --restart=unless-stopped --link rancherdb:mysql \
        -e MYSQL_DB=$RANCHER_MYSQL_DATABASE \
        -e CRON_TIME=$BACKUP_CRON \
        -e MAX_BACKUPS=1 \
+       -e INIT_RESTORE_LATEST=true \
        tutum/mysql-backup
 
 # install rancher
-docker run -d --restart=unless-stopped --link rancherdb:mysql \
+docker run -d --name rancher --restart=unless-stopped --link rancherdb:mysql \
        -e CATTLE_DB_CATTLE_MYSQL_HOST=$MYSQL_PORT_3306_TCP_ADDR \
        -e CATTLE_DB_CATTLE_MYSQL_PORT=3306 \
        -e CATTLE_DB_CATTLE_MYSQL_NAME=$RANCHER_MYSQL_DATABASE \
