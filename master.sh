@@ -61,15 +61,15 @@ systemctl status docker
 systemctl enable docker
 docker run hello-world
 
-# install backup agent
-docker run -d --name backup \
-       -v /exports/backup/mysql:/var/backup/mysql \
-       -v /exports/certs:/var/backup/certs \
-       --privileged \
-       yaronr/backup-volume-container:latest $DUPLICITY_BACKEND "$QUIET_PERIOD"
+# install conplicity cron
+docker run --name backup -ti --detach \
+       -v /var/run/docker.sock:/var/run/docker.sock:ro \
+       -e AWS_ACCESS_KEY_ID=<key_id> \
+       -e CONPLICITY_CRON_SCHEDULE="$BACKUP_CRON" \
+       bkendinibilir/conplicity-cron
 
 # install nginx
-docker run -d --name nginx --restart=unless-stopped -p 80:80 -p 443:443 \
+docker run -d --name nginx --restart=always -p 80:80 -p 443:443 \
        --name nginx-proxy \
        -v /exports/certs:/etc/nginx/certs:ro \
        -v /etc/nginx/vhost.d \
@@ -83,24 +83,11 @@ docker run -d --restart=unless-stopped \
        alastaircoote/docker-letsencrypt-nginx-proxy-companion:latest
 
 # install mariadb
-docker run -d --name rancherdb --restart=unless-stopped \
+docker run -d --name rancherdb --restart=always \
        -v /exports/rancher/mysql:/var/lib/mysql \
        -e MYSQL_DATABASE=$RANCHER_MYSQL_DATABASE \
        -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD \
        mariadb:latest
-
-# install mysql backup
-docker run -d --name mysql-backup --restart=unless-stopped --link rancherdb:mysql \
-       -v /backup/mysql:/backup \
-       -e MYSQL_HOST=mysql \
-       -e MYSQL_PORT=27017 \
-       -e MYSQL_USER=root \
-       -e MYSQL_PASS=$MYSQL_PASSWORD \
-       -e MYSQL_DB=$RANCHER_MYSQL_DATABASE \
-       -e CRON_TIME=$BACKUP_CRON \
-       -e MAX_BACKUPS=1 \
-       -e INIT_RESTORE_LATEST=true \
-       tutum/mysql-backup:latest
 
 # install rancher
 docker run -d --name rancher --restart=unless-stopped --link rancherdb:mysql \
