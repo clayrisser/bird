@@ -66,7 +66,7 @@ docker run -d --name backup \
        -v /exports/backup/mysql:/var/backup/mysql \
        -v /exports/certs:/var/backup/certs \
        --privileged \
-       yaronr/backup-volume-container $DUPLICITY_BACKEND "$QUIET_PERIOD"
+       yaronr/backup-volume-container:latest $DUPLICITY_BACKEND "$QUIET_PERIOD"
 
 # install nginx
 docker run -d --name nginx --restart=unless-stopped -p 80:80 -p 443:443 \
@@ -80,7 +80,7 @@ docker run -d --restart=unless-stopped \
        -v /exports/certs:/etc/nginx/certs:rw \
        --volumes-from nginx-proxy \
        -v /var/run/docker.sock:/var/run/docker.sock:ro \
-       alastaircoote/docker-letsencrypt-nginx-proxy-companion
+       alastaircoote/docker-letsencrypt-nginx-proxy-companion:latest
 
 # install mariadb
 docker run -d --name rancherdb --restart=unless-stopped \
@@ -100,7 +100,7 @@ docker run -d --name mysql-backup --restart=unless-stopped --link rancherdb:mysq
        -e CRON_TIME=$BACKUP_CRON \
        -e MAX_BACKUPS=1 \
        -e INIT_RESTORE_LATEST=true \
-       tutum/mysql-backup
+       tutum/mysql-backup:latest
 
 # install rancher
 docker run -d --name rancher --restart=unless-stopped --link rancherdb:mysql \
