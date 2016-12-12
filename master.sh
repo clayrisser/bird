@@ -14,39 +14,39 @@ if [ $(whoami) = "root" ]; then # if run as root
 
 # gather information
 read -p "Email ($EMAIL): " EMAIL_NEW
-if [ $EMAIL_NEW ]; then
+if [ "$EMAIL_NEW" ]; then
     EMAIL=$EMAIL_NEW
 fi
 read -p "Rancher MYSQL Database ($RANCHER_MYSQL_DATABASE): " RANCHER_MYSQL_DATABASE_NEW
-if [ $RANCHER_MYSQL_DATABASE_NEW ]; then
+if [ "$RANCHER_MYSQL_DATABASE_NEW" ]; then
     RANCHER_MYSQL_DATABASE=$RANCHER_MYSQL_DATABASE_NEW
 fi
 read -p "MYSQL Password ($MYSQL_PASSWORD): " MYSQL_PASSWORD_NEW
-if [ $MYSQL_PASSWORD_NEW ]; then
+if [ "$MYSQL_PASSWORD_NEW" ]; then
     MYSQL_PASSWORD=$MYSQL_PASSWORD_NEW
 fi
 read -p "Rancher Domain ($RANCHER_DOMAIN): " RANCHER_DOMAIN_NEW
-if [ $RANCHER_DOMAIN_NEW ]; then
+if [ "$RANCHER_DOMAIN_NEW" ]; then
     RANCHER_DOMAIN=$RANCHER_DOMAIN_NEW
 fi
 read -p "Management Node ($MANAGEMENT_NODE): " MANAGEMENT_NODE_NEW
-if [ $MANAGEMENT_NODE_NEW ]; then
+if [ "$MANAGEMENT_NODE_NEW" ]; then
     MANAGEMENT_NODE=$MANAGEMENT_NODE_NEW
 fi
 read -p "Metadata Service ID ($METADATA_SERVICE_ID): " METADATA_SERVICE_ID_NEW
-if [ $METADATA_SERVICE_ID_NEW ]; then
+if [ "$METADATA_SERVICE_ID_NEW" ]; then
     METADATA_SERVICE_ID=$METADATA_SERVICE_ID_NEW
 fi
 read -p "Backup Cron ($BACKUP_CRON): " BACKUP_CRON_NEW
-if [ $BACKUP_CRON_NEW ]; then
+if [ "$BACKUP_CRON_NEW" ]; then
     BACKUP_CRON=$BACKUP_CRON_NEW
 fi
 read -p "Duplicity Backend ($DUPLICITY_BACKEND): " DUPLICITY_BACKEND_NEW
-if [ $DUPLICITY_BACKEND_NEW ]; then
+if [ "$DUPLICITY_BACKEND_NEW" ]; then
     DUPLICITY_BACKEND=$DUPLICITY_BACKEND_NEW
 fi
 read -p "Quiet Period ($QUIET_PERIOD): " QUIET_PERIOD_NEW
-if [ $QUIET_PERIOD_NEW ]; then
+if [ "$QUIET_PERIOD_NEW" ]; then
     QUIET_PERIOD=$QUIET_PERIOD_NEW
 fi
 
@@ -66,7 +66,7 @@ docker run -d --restart=unless-stopeed \
        -v /exports/backup/mysql:/var/backup/mysql \
        -v /exports/certs:/var/backup/certs \
        --privileged --rm \
-       yaronr/backup-volume-container $DUPLICITY_BACKEND $QUIET_PERIOD
+       yaronr/backup-volume-container $DUPLICITY_BACKEND "$QUIET_PERIOD"
 
 # install nginx
 docker run -d --name nginx --restart=unless-stopped -p 80:80 -p 443:443 \
