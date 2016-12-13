@@ -6,10 +6,10 @@ MYSQL_PASSWORD=hellodocker
 RANCHER_DOMAIN=cloud.yourdomain.com
 MANAGEMENT_NODE=node01
 METADATA_SERVICE_ID=1
-BACKUP_CRON="0 0 * * *"
+BACKUP_CRON="0 0 0 * * *"
 GC_BUCKET="imabucket/backup"
-GC_ACCESS_KEY="imanaccesskey"
-GC_SECRET_KEY="imasecretkey"
+GC_ACCESS_KEY="gc-access-key"
+GC_SECRET_KEY="gc-secret-key"
 
 if [ $(whoami) = "root" ]; then # if run as root
 
@@ -66,17 +66,15 @@ systemctl status docker
 systemctl enable docker
 docker run hello-world
 
-# install duplicity
-docker run -d --name duplicity --restart=always \
-       --privileged=true \
-       -v /exports/certs:/var/backup/certs \
-       -v /exports/backup/mysql:/var/backup/backup/mysql \
-       -e CRON_SCHEDULE="$BACKUP_CRON" \
+# install restore volumes
+docker run -rm \
+       -v /exports/certs:/volumes/certs \
+       -v /exports/backup/mysql:/volumes/mysql \
        -e GS_ACCESS_KEY_ID=$GC_ACCESS_KEY \
        -e GS_SECRET_ACCESS_KEY=$GC_SECRET_KEY \
-       -e DEST_GS=$GC_BUCKET \
-       -e ALLOW_SOURCE_MISMATCH="yes" \
-       lagun4ik/docker-backup
+       -e TARGET_URL=$GC_BUCKET \
+       -e TYPE=restore \
+       jamrizzi/dockplicity:latest
 
 # install nginx
 docker run -d --name nginx --restart=always -p 80:80 -p 443:443 \
@@ -111,6 +109,16 @@ docker run -d --name rancher --restart=unless-stopped --link rancherdb:mysql \
        -e LETSENCRYPT_HOST=$RANCHER_DOMAIN \
        -e LETSENCRYPT_EMAIL=$EMAIL \
        rancher/server:latest
+
+# install duplicity
+docker run -d --name duplicity --restart=always \
+       -v /exports/certs:/volumes/certs \
+       -v /exports/backup/mysql:/volumes/mysql \
+       -e GS_ACCESS_KEY_ID=$GC_ACCESS_KEY \
+       -e GS_SECRET_ACCESS_KEY=$GC_SECRET_KEY \
+       -e TARGET_URL=$GC_BUCKET \
+       -e BACKUP_CRON="$BACKUP_CRON" \
+       jamrizzi/dockplicity:latest
 
 # beegfs management server
 curl -o management-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/management-install.sh
