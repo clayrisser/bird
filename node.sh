@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # settings
-# DATA_DIRECTORY=/exports/
-# VOLUME_MOUNT=/dev/disk/by-id/google-disk-1
+
 MANAGEMENT_NODE=node01
-STORAGE_SERVICE_ID=3
-STORAGE_TARGET_ID=301
-KERNEL_MODULE_AUTOBUILD=N
+STORAGE_SERVICE_ID=2
+STORAGE_TARGET_ID=201
+KERNEL_MODULE_AUTOBUILD=false
+STORAGE_MOUNT=local
 
 if [ $(whoami) = "root" ]; then # if run as root
 
@@ -31,20 +31,25 @@ read -p "Storage Target ID ($STORAGE_TARGET_ID): " STORAGE_TARGET_ID_NEW
 if [ $STORAGE_TARGET_ID_NEW ]; then
     STORAGE_TARGET_ID=$STORAGE_TARGET_ID_NEW
 fi
-read -p "Kernel Module Autobuild (y|N): " KERNEL_MODULE_AUTOBUILD_NEW
+read -p "Kernel Module Autobuild ($KERNEL_MODULE_AUTOBUILD): " KERNEL_MODULE_AUTOBUILD_NEW
 if [ $KERNEL_MODULE_AUTOBUILD_NEW ]; then
     KERNEL_MODULE_AUTOBUILD=$KERNEL_MODULE_AUTOBUILD_NEW
+fi
+read -p "Storage Mount ($STORAGE_MOUNT): " STORAGE_MOUNT_NEW
+if [ $STORAGE_MOUNT_NEW ]; then
+    STORAGE_MOUNT=$STORAGE_MOUNT_NEW
 fi
 
 # prepare system
 yum update -y
 
-# mount and create data directory
-# mkfs.xfs -i size=512 $VOLUME_MOUNT
-# mkdir -p $DATA_DIRECTORY
-# echo "$VOLUME_MOUNT $DATA_DIRECTORY xfs defaults 1 2" >> /etc/fstab
-# mount -a && mount
-# chmod -R 777 $DATA_DIRECTORY
+# mount and create storage directory
+mkdir -p /mnt/beegfs
+if [ "$STORAGE_MOUNT" != "local" ]; then
+    mkfs.xfs -i size=512 $STORAGE_MOUNT
+    echo "$STORAGE_MOUNT /mnt/beegfs xfs defaults 1 2" >> /etc/fstab
+    mount -a && mount
+fi
 
 # install storage server
 curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/storage-install.sh
@@ -52,9 +57,14 @@ curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-doc
 rm storage-install.sh
 /etc/init.d/beegfs-storage status
 
+if [ "$KERNEL_MODULE_AUTOBUILD" == "true" ]; then
+    _KERNEL_MODULE_AUTOBUILD=y
+else
+    _KERNEL_MODULE_AUTOBUILD=n
+fi
 # install client server
 curl -o client-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/client-install.sh
-(echo $MANAGEMENT_NODE; echo $KERNEL_MODULE_AUTOBUILD; echo N) | bash client-install.sh
+(echo $MANAGEMENT_NODE; echo $_KERNEL_MODULE_AUTOBUILD; echo N) | bash client-install.sh
 rm client-install.sh
 /etc/init.d/beegfs-client status
 /etc/init.d/beegfs-helperd status
