@@ -10,15 +10,6 @@ STORAGE_MOUNT=local
 
 if [ $(whoami) = "root" ]; then # if run as root
 
-# gather information
-# read -p "Data Directory ($DATA_DIRECTORY): " DATA_DIRECTORY_NEW
-# if [ $DATA_DIRECTORY_NEW ]; then
-#     DATA_DIRECTORY=$DATA_DIRECTORY_NEW
-# fi
-# read -p "Volume Mount ($VOLUME_MOUNT): " VOLUME_MOUNT_NEW
-# if [ $VOLUME_MOUNT_NEW ]; then
-#     VOLUME_MOUNT=$VOLUME_MOUNT_NEW
-# fi
 read -p "Management Node ($MANAGEMENT_NODE): " MANAGEMENT_NODE_NEW
 if [ $MANAGEMENT_NODE_NEW ]; then
     MANAGEMENT_NODE=$MANAGEMENT_NODE_NEW
