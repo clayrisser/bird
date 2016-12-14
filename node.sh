@@ -35,10 +35,10 @@ fi
 yum update -y
 
 # mount and create storage directory
-mkdir -p /mnt/beegfs
+mkdir -p /mnt/myraid1
 if [ "$STORAGE_MOUNT" != "local" ]; then
     mkfs.xfs -i size=512 $STORAGE_MOUNT
-    echo "$STORAGE_MOUNT /mnt/beegfs xfs defaults 1 2" >> /etc/fstab
+    echo "$STORAGE_MOUNT /mnt/myraid1 xfs defaults 1 2" >> /etc/fstab
     mount -a && mount
 fi
 
