@@ -50,6 +50,7 @@ fi
 # increase max_map_count
 sysctl vm.max_map_count=VALUE
 echo "vm.max_map_count = VALUE" | tee -a /etc/sysctl.conf
+sysctl -p
 
 # install storage server
 curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/storage-install.sh
