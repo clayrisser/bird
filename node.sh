@@ -7,6 +7,7 @@ STORAGE_SERVICE_ID=2
 STORAGE_TARGET_ID=201
 KERNEL_MODULE_AUTOBUILD=false
 STORAGE_MOUNT=local
+MAX_MAP_COUNT=262144
 
 if [ $(whoami) = "root" ]; then # if run as root
 
@@ -30,6 +31,10 @@ read -p "Storage Mount ($STORAGE_MOUNT): " STORAGE_MOUNT_NEW
 if [ $STORAGE_MOUNT_NEW ]; then
     STORAGE_MOUNT=$STORAGE_MOUNT_NEW
 fi
+read -p "Max Map Count ($MAX_MAP_COUNT): " MAX_MAP_COUNT_NEW
+if [ $MAX_MAP_COUNT_NEW ]; then
+    MAX_MAP_COUNT=$MAX_MAP_COUNT_NEW
+fi
 
 # prepare system
 yum update -y
@@ -41,6 +46,10 @@ if [ "$STORAGE_MOUNT" != "local" ]; then
     echo "$STORAGE_MOUNT /mnt/myraid1 xfs defaults 1 2" >> /etc/fstab
     mount -a && mount
 fi
+
+# increase max_map_count
+sysctl vm.max_map_count=VALUE
+echo "vm.max_map_count = VALUE" | tee -a /etc/sysctl.conf
 
 # install storage server
 curl -o storage-install.sh https://raw.githubusercontent.com/jamrizzi/beegfs-docker/master/storage-install.sh
