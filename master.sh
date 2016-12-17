@@ -82,6 +82,7 @@ if [ "$VOLUMES_MOUNT" != "local" ]; then
 fi
 
 # install docker
+install("docker")
 yum check-update
 curl -fsSL https://get.docker.com/ | sh
 systemctl start docker

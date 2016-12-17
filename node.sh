@@ -70,7 +70,8 @@ rm client-install.sh
 /etc/init.d/beegfs-client status
 /etc/init.d/beegfs-helperd status
 
-# restart
+t
+restart
 read -p "Restart Machine? (Y|n): " RESTART_NEW
 if [ $RESTART_NEW ]; then
     RESTART=$RESTART_NEW
