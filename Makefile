@@ -48,7 +48,7 @@ sweep:
 
 .PHONY: bleach
 bleach:
-	@rm -rf rancher-installer.tar.gz
+	@rm -rf rancher-installer.tar.gz rancher-installer-*
 	$(info bleached)
 
 
