@@ -57,7 +57,7 @@ sweep:
 
 .PHONY: bleach
 bleach:
-	@rm -rf beeduprandock beeduprandock.*
+	@rm -rf beeduprandock beeduprandock-*
 	$(info bleached)
 
 
