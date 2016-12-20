@@ -15,14 +15,14 @@ Docker is the contianer engine. Any application packaged as a docker container c
 ## Install
 
 ```sh
-curl -L https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/scripts/download.sh | bash
+
 ```
 ### Master
 ```sh
-sudo beeduprandock/master
+curl -L https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/scripts/download.sh | bash && sudo beeduprandock/master
 ```
 
 ### Node
 ```sh
-sudo beeduprandock/node
+curl -L https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/scripts/download.sh | bash && sudo beeduprandock/node
 ```
