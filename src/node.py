@@ -100,18 +100,16 @@ def connect_to_rancher(options):
     ''')
 
 def install_storage_server(options):
-    print('******************')
-    print(options['management_node'])
     os.system('''
-    (echo + ''' + options['management_node'] + '''; \
-    echo + ''' + options['storage_service_id'] + '''; \
-    echo + ''' + options['storage_target_id'] + ''') | beegfs-installer/storage-install
+    (echo ''' + options['management_node'] + '''; \
+    echo ''' + options['storage_service_id'] + '''; \
+    echo ''' + options['storage_target_id'] + ''') | beegfs-installer/storage-install
     ''')
 
 def install_client_server(options):
     os.system('''
-    (echo + ''' + options['management_node'] + '''; \
-    echo + ''' + options['kernel_module_autobuild'] + ''' \
+    (echo ''' + options['management_node'] + '''; \
+    echo ''' + options['kernel_module_autobuild'] + ''' \
     echo N) | beegfs-installer/client-install
     ''')
 
