@@ -11,4 +11,9 @@ dist
 get-pip.py
 
 # Build
+<<<<<<< bcbed10fbdb03f5ddf0590ad7a05c4a7fcdce3f3
 beegfs-installer-*
+=======
+beeduprandock
+beeduprandock.*
+>>>>>>> Finished moving to python

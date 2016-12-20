@@ -13,12 +13,16 @@ Rancher is the orchastration platform. It is used to maintain a scalable and hig
 Docker is the contianer engine. Any application packaged as a docker container can be run on the stack.
 
 ## Install
+
+```sh
+curl -L https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/scripts/download.sh | bash
+```
 ### Master
 ```sh
-curl -o master.sh https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/master.sh && sudo bash master.sh
+sudo beeduprandock/master
 ```
 
 ### Node
 ```sh
-curl -o node.sh https://raw.githubusercontent.com/jamrizzi/beeduprandock/master/node.sh && sudo bash node.sh
+sudo beeduprandock/node
 ```

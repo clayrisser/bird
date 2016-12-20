@@ -14,7 +14,7 @@ if [ "$(echo $DISTRO | awk '{print substr($0,0,6)}')" == "centos" ]; then
     export DISTRO=centos
 fi
 if [ "$DISTRO" == "Ubuntu" ]; then
-    curl -L https://github.com/jamrizzi/beegfs-installer/releases/download/v0.0.5/beegfs-installer-ubuntu.tar.gz | tar zxv
+    curl -L https://github.com/jamrizzi/beeduprandock/releases/download/v0.0.1/beeduprandock-ubuntu.tar.gz | tar zxv
 elif [ "$DISTRO" == "centos" ]; then
-    curl -L https://github.com/jamrizzi/beegfs-installer/releases/download/v0.0.5/beegfs-installer-centos.tar.gz | tar zxv
+    curl -L https://github.com/jamrizzi/beeduprandock/releases/download/v0.0.1/beeduprandock-centos.tar.gz | tar zxv
 fi

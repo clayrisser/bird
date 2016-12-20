@@ -8,32 +8,41 @@ all: fetch_docker build_from_docker
 ## BUILD ##
 .PHONY: build_from_docker
 build_from_docker:
-	docker run --rm -v $(CWD):/work jamrizzi/centos-dev:latest make build_centos
-	docker run --rm -v $(CWD):/work jamrizzi/ubuntu-dev:latest make build_ubuntu
+	docker run --rm -it -v $(CWD):/work jamrizzi/centos-dev:latest make build_centos
+	docker run --rm -it -v $(CWD):/work jamrizzi/ubuntu-dev:latest make build_ubuntu
 	$(info built from docker)
 
 .PHONY: build_centos
-build_centos: fetch_dependancies build rancher-installer-centos.tar.gz sweep
-$(info built for centos)
+build_centos: fetch_dependancies build beeduprandock-centos.tar.gz sweep
+	$(info built for centos)
 
 .PHONY: build_ubuntu
-build_ubuntu: fetch_dependancies build rancher-installer-ubuntu.tar.gz sweep
-$(info built for ubuntu)
+build_ubuntu: fetch_dependancies build beeduprandock-ubuntu.tar.gz sweep
+	$(info built for ubuntu)
 
 .PHONY: build
-build: dist/rancher-installer
+build: dist/master dist/node
 	$(info built)
 
-dist/rancher-installer:
-	pyinstaller --onefile --noupx rancher-installer.py
+dist/master:
+	pyinstaller --onefile --noupx src/master.py
+
+dist/node:
+	pyinstaller --onefile --noupx src/node.py
 
 
 ## PACKAGE ##
-rancher-installer-centos.tar.gz:
-	@tar -zcvf rancher-installer-centos.tar.gz dist/rancher-installer
+beeduprandock-centos.tar.gz:
+	@mkdir beeduprandock
+	@cp -r dist/* beeduprandock
+	@tar -zcvf beeduprandock-centos.tar.gz beeduprandock
+	@rm -rf beeduprandock
 
-rancher-installer-ubuntu.tar.gz:
-	@tar -zcvf rancher-installer-ubuntu.tar.gz dist/rancher-installer
+beeduprandock-ubuntu.tar.gz:
+	@mkdir beeduprandock
+	@cp -r dist/* beeduprandock
+	@tar -zcvf beeduprandock-ubuntu.tar.gz beeduprandock
+	@rm -rf beeduprandock
 
 
 ## CLEAN ##
@@ -48,13 +57,13 @@ sweep:
 
 .PHONY: bleach
 bleach:
-	@rm -rf rancher-installer.tar.gz rancher-installer-*
+	@rm -rf beeduprandock beeduprandock.*
 	$(info bleached)
 
 
 ## FETCH DEPENDANCIES ##
 .PHONY: fetch_dependancies
-fetch_dependancies: pip future pyinstaller
+fetch_dependancies: pip future ipgetter pyinstaller
 	$(info fetched dependancies)
 
 .PHONY: pip
@@ -67,6 +76,10 @@ endif
 .PHONY: future
 future:
 	pip install future
+
+.PHONY: ipgetter
+ipgetter:
+	pip install ipgetter
 
 .PHONY: pyinstaller
 pyinstaller:
