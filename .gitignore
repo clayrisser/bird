@@ -13,3 +13,5 @@ get-pip.py
 # Build
 beeduprandock
 beeduprandock-*
+beegfs-installer
+rancher-installer

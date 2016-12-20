@@ -52,7 +52,7 @@ clean: sweep bleach
 
 .PHONY: sweep
 sweep:
-	@rm -rf build dist *.spec */*.spec *.pyc */*.pyc get-pip.py
+	@rm -rf build dist *.spec */*.spec *.pyc */*.pyc get-pip.py beegfs-installer rancher-installer
 	$(info swept)
 
 .PHONY: bleach
