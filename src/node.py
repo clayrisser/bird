@@ -109,7 +109,7 @@ def install_storage_server(options):
 def install_client_server(options):
     os.system('''
     (echo ''' + options['management_node'] + '''; \
-    echo ''' + options['kernel_module_autobuild'] + ''' \
+    echo ''' + options['kernel_module_autobuild'] + '''; \
     echo N) | beegfs-installer/client-install
     ''')
 
