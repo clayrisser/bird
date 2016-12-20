@@ -25,6 +25,7 @@ def get_defaults():
     print('Getting external ip . . .')
     return {
         'management_node': 'node01',
+        'rancher_domain': 'cloud.yourdomain.com',
         'node_ip': ipgetter.myip(),
         'registration_token': 'my-rancher-token',
         'storage_service_id': '2',
@@ -37,6 +38,7 @@ def get_defaults():
 def gather_information(defaults):
     options = {}
     options['management_node'] = default_prompt('Management Node', defaults['management_node'])
+    options['rancher_domain'] = default_prompt('Rancher Domain', defaults['rancher_domain'])
     options['node_ip'] = default_prompt('Node IP', defaults['node_ip'])
     options['registration_token'] = default_prompt('Registration Token', defaults['registration_token'])
     options['storage_service_id'] = default_prompt('Storage Service ID', defaults['storage_service_id'])
@@ -79,8 +81,6 @@ def create_storage_dir(options):
 def install_docker():
     os.system('''
     curl -L https://get.docker.com/ | bash
-    service docker start
-    service docker status
     docker run hello-world
     ''')
 
@@ -96,10 +96,12 @@ def connect_to_rancher(options):
     docker run -e CATTLE_AGENT_IP="''' + options['node_ip'] + '''"  -d --privileged \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /var/lib/rancher:/var/lib/rancher \
-    rancher/agent:v1.1.1 https://''' + options['management_node'] + '/v1/scripts/' + options['registration_token'] + ''' \
+    rancher/agent:v1.1.1 https://''' + options['rancher_domain'] + '/v1/scripts/' + options['registration_token'] + ''' \
     ''')
 
 def install_storage_server(options):
+    print('******************')
+    print(options['management_node'])
     os.system('''
     (echo + ''' + options['management_node'] + '''; \
     echo + ''' + options['storage_service_id'] + '''; \
