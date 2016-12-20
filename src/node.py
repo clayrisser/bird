@@ -39,6 +39,7 @@ def gather_information(defaults):
     options['node_ip'] = default_prompt('Node IP', defaults['node_ip'])
     options['registration_token'] = default_prompt('Registration Token', defaults['registration_token'])
     options['storage_service_id'] = default_prompt('Storage Service ID', defaults['storage_service_id'])
+    options['storage_target_id'] = default_prompt('Storage Target ID', defaults['storage_target_id'])
     options['kernel_module_autobuild'] = default_prompt('Kernel Module Autobuild', defaults['kernel_module_autobuild'])
     options['storage_mount'] = default_prompt('Storage Mount', defaults['storage_mount'])
     options['max_map_count'] = default_prompt('Max Map Count', defaults['max_map_count'])
@@ -71,6 +72,8 @@ def create_storage_dir(options):
 def install_docker():
     os.system('''
     curl -L https://get.docker.com/ | bash
+    service docker start
+    service docker status
     docker run hello-world
     ''')
 
