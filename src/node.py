@@ -12,6 +12,7 @@ def main():
     helper.is_root()
     options = gather_information(get_defaults())
     helper.prepare()
+    prepare_system()
     create_storage_dir(options)
     install_docker()
     increase_max_map_count(options)
@@ -53,14 +54,20 @@ def default_prompt(name, fallback):
     else:
         return fallback
 
-def prepare_system():
-    if (platform.dist()[0] == 'Ubuntu'):
-        os.system('apt-get update -y')
-    elif (platform.dist()[0] == 'centos'):
-        os.system('yum update -y')
+def boolean_prompt(name, fallback):
+    default = 'Y|n'
+    fallback = fallback.upper()
+    if (fallback == 'N'):
+        default = 'y|N'
+    response = input(name + ' (' + default + '): ')
+    assert isinstance(response, str)
+    if (response):
+        return response.upper()
     else:
-        print('Operating system not supported')
-        sys.exit('Exiting installer')
+        return fallback
+
+def prepare_system():
+    os.system('curl -L https://raw.githubusercontent.com/jamrizzi/beegfs-installer/master/scripts/download.sh | bash')
 
 def create_storage_dir(options):
     os.system('mkdir -p /mnt/myraid1')
@@ -108,9 +115,8 @@ def install_client_server(options):
 
 def reboot():
     print('Installation finished')
-    reboot = 'true'
-    reboot = default_prompt('Reboot', reboot)
-    if (reboot == 'true'):
+    reboot = boolean_prompt('Reboot', 'Y')
+    if (reboot == 'Y'):
         os.system('reboot')
         sys.exit('Rebooting . . .')
     else:
