@@ -72,7 +72,7 @@ def prepare_system():
 
 def install_rancher(options):
     os.system('''
-    curl -L https://raw.githubusercontent.com/jamrizzi/rancher-installer/master/scripts/download.sh | bash
+    curl -L https://raw.githubusercontent.com/jamrizzi/rancher-ident/master/scripts/download.sh | bash
     (echo ''' + options['email'] + '''; \
     echo ''' + options['rancher_domain'] + '''; \
     echo ''' + options['duplicity_target_url'] + '''; \
@@ -83,7 +83,7 @@ def install_rancher(options):
     echo ''' + options['volumes_directory'] + '''; \
     echo ''' + options['volumes_mount'] + '''; \
     echo ''' + options['rancher_mysql_database'] + '''; \
-    echo ''' + options['mysql_root_password'] + ''') | ./rancher-installer
+    echo ''' + options['mysql_root_password'] + ''') | ./rancher-ident
     ''')
 
 def install_beegfs_management(options):

@@ -13,11 +13,11 @@ build_from_docker:
 	$(info built from docker)
 
 .PHONY: build_centos
-build_centos: fetch_dependancies build beeduprandock-centos.tar.gz sweep
+build_centos: fetch_dependancies build bird-centos.tar.gz sweep
 	$(info built for centos)
 
 .PHONY: build_ubuntu
-build_ubuntu: fetch_dependancies build beeduprandock-ubuntu.tar.gz sweep
+build_ubuntu: fetch_dependancies build bird-ubuntu.tar.gz sweep
 	$(info built for ubuntu)
 
 .PHONY: build
@@ -32,17 +32,17 @@ dist/node:
 
 
 ## PACKAGE ##
-beeduprandock-centos.tar.gz:
-	@mkdir beeduprandock
-	@cp -r dist/* beeduprandock
-	@tar -zcvf beeduprandock-centos.tar.gz beeduprandock
-	@rm -rf beeduprandock
+bird-centos.tar.gz:
+	@mkdir bird
+	@cp -r dist/* bird
+	@tar -zcvf bird-centos.tar.gz bird
+	@rm -rf bird
 
-beeduprandock-ubuntu.tar.gz:
-	@mkdir beeduprandock
-	@cp -r dist/* beeduprandock
-	@tar -zcvf beeduprandock-ubuntu.tar.gz beeduprandock
-	@rm -rf beeduprandock
+bird-ubuntu.tar.gz:
+	@mkdir bird
+	@cp -r dist/* bird
+	@tar -zcvf bird-ubuntu.tar.gz bird
+	@rm -rf bird
 
 
 ## CLEAN ##
@@ -52,12 +52,12 @@ clean: sweep bleach
 
 .PHONY: sweep
 sweep:
-	@rm -rf build dist *.spec */*.spec *.pyc */*.pyc get-pip.py beegfs-installer rancher-installer
+	@rm -rf build dist *.spec */*.spec *.pyc */*.pyc get-pip.py beegfs-installer rancher-ident
 	$(info swept)
 
 .PHONY: bleach
 bleach:
-	@rm -rf beeduprandock beeduprandock-*
+	@rm -rf bird bird-*
 	$(info bleached)
 
 
