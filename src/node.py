@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import socket
 import os
 import platform
 from builtins import input
@@ -13,7 +14,8 @@ def main():
     options = gather_information(get_defaults())
     helper.prepare()
     prepare_system()
-    create_storage_dir(options)
+    mount_storage(options)
+    mount_backup(options)
     install_docker()
     increase_max_map_count(options)
     connect_to_rancher(options)
@@ -23,7 +25,7 @@ def main():
 
 def get_defaults():
     print('Getting external ip . . .')
-    return {
+    defaults = {
         'management_node': 'node01',
         'rancher_domain': 'cloud.yourdomain.com',
         'node_ip': ipgetter.myip(),
@@ -34,6 +36,7 @@ def get_defaults():
         'storage_mount': 'local',
         'max_map_count': '262144'
     }
+    return defaults
 
 def gather_information(defaults):
     options = {}
@@ -45,11 +48,15 @@ def gather_information(defaults):
     options['storage_target_id'] = default_prompt('Storage Target ID', defaults['storage_target_id'])
     options['kernel_module_autobuild'] = default_prompt('Kernel Module Autobuild', defaults['kernel_module_autobuild'])
     options['storage_mount'] = default_prompt('Storage Mount', defaults['storage_mount'])
+    options['backup_mount'] = default_prompt('Backup Mount', socket.gethostbyname(options['management_node']) + ':/cloud-backup')
     options['max_map_count'] = default_prompt('Max Map Count', defaults['max_map_count'])
     return options
 
 def default_prompt(name, fallback):
-    response = input(name + ' (' + fallback + '): ')
+    message = name + ': '
+    if fallback != '':
+        message = name + ' (' + fallback + '): '
+    response = input(message)
     assert isinstance(response, str)
     if (response):
         return response
@@ -70,13 +77,30 @@ def boolean_prompt(name, fallback):
 
 def prepare_system():
     os.system('curl -L https://raw.githubusercontent.com/jamrizzi/beegfs-installer/master/scripts/download.sh | bash')
+    if (platform.dist()[0] == 'centos'):
+        os.system('yum install -y nfs-utils nfs-utils-lib')
+    elif (platform.dist()[0] == 'Ubuntu'):
+        os.system('apt-get install -y nfs-common')
+    else:
+        print('Operating system not supported')
+        sys.exit('Exiting installer')
 
-def create_storage_dir(options):
-    os.system('mkdir -p /mnt/myraid1')
-    if (options['storage_mount'] != 'local'):
-        os.system('mkfs.xfs -i size=512 ' + options['storage_mount'])
-        os.system('echo ' + options['storage_mount'] + ' /mnt/myraid1 xfs defaults 1 2" >> /etc/fstab')
-        os.system('mount -a && mount')
+def mount(mount_from, mount_to):
+    os.system('mkdir -p ' + mount_to)
+    if mount_from != 'local':
+        if mount_from[:4] == '/dev':
+            os.system('mkfs.xfs -i size=512 ' + mount_from)
+            os.system('echo "' + mount_from + ' ' +  mount_to + ' xfs defaults 1 2" | tee -a /etc/fstab')
+            os.system('mount -a && mount')
+        else:
+            os.system('mount -t nfs -o proto=tcp,port=2049 ' + mount_from + ' ' + mount_to)
+            os.system('echo "' + mount_from + ' ' + mount_to + ' nfs rsize=8192,wsize=8192,timeo=14,intr" | tee -a /etc/fstab')
+
+def mount_storage(options):
+    mount(options['storage_mount'], '/mnt/myraid1')
+
+def mount_backup(options):
+    mount(options['backup_mount'], '/backup')
 
 def install_docker():
     os.system('''

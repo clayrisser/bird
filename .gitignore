@@ -11,7 +11,7 @@ dist
 get-pip.py
 
 # Build
-beeduprandock
-beeduprandock-*
+bird
+bird-*
 beegfs-installer
 rancher-installer
