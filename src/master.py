@@ -26,7 +26,7 @@ def get_defaults():
         'rancher_domain': 'cloud.yourdomain.com',
         'management_node': 'node01',
         'metadata_service_id': '1',
-        'cron_schedule': '0 0 0 * * *',
+        'cron_schedule': '0 0 * * *',
         'backup_cloud_mount': 'local',
         'volumes_mount': 'local',
         'backup_volumes_mount': 'local',
