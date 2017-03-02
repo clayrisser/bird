@@ -1,7 +1,7 @@
 # bird
 A stack for managing a highly available cloud platform.
 
-Bee-dup-ran-dock stands for . . .
+bird stands for . . .
 
 ### [Beegfs](http://www.beegfs.com/)
 Beegfs is used to maintain persistent storage accross the stack.
