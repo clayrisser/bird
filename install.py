@@ -30,7 +30,7 @@ def main():
     pip install ipgetter
     ''')
 
-    if len(sys.argv > 1):
+    if len(sys.argv) > 1:
         if sys.argv[1] == 'master':
             os.system('python2 ./bird/src/master.py')
         elif sys.argv[1] == 'node':
@@ -39,6 +39,6 @@ def main():
         print('No command given')
         sys.exit('Exiting installer')
 
-    os.system('rm -rf ./bird')
+    os.system('rm -rf ./install.py ./bird')
 
 main()
