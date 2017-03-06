@@ -33,9 +33,9 @@ pip install future
 pip install ipgetter
 
 # Installation
-if [ "$2" == "master" ]; then
+if [ "$1" == "master" ]; then
     python2 ./bird/src/master.py
-elif [ "$2" == "node" ]; then
+elif [ "$1" == "node" ]; then
     python2 ./bird/src/node.py
 fi
 

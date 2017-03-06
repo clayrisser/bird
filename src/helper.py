@@ -24,9 +24,7 @@ class Helper:
             print('Requires root privileges')
             sys.exit('Exiting installer')
 
-    def default_prompt(self, name, fallback, prompt):
-        if (prompt == False):
-            return fallback
+    def default_prompt(self, name, fallback):
         message = name + ': '
         if fallback != '':
             message = name + ' (' + fallback + '): '
