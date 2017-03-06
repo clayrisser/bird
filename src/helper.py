@@ -42,7 +42,8 @@ class Helper:
         if mount_from != 'local':
             if mount_from[:4] == '/dev':
                 os.system('''
-                echo "''' + mount_from + ' ' +  mount_to + ''' xfs defaults 1 2" | tee -a /etc/fstab
+                mkfs.xfs ''' + mount_from + '''
+                echo "''' + mount_from + ' ' +  mount_to + ''' xfs defaults 0 2" | tee -a /etc/fstab
                 mount -a && mount
                 ''')
             else:

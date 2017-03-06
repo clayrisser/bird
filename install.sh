@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Determine OS
 UNAME=$(uname | tr "[:upper:]" "[:lower:]")
 if [ "$UNAME" == "linux" ]; then
     if [ -f /etc/lsb-release -o -d /etc/lsb-release.d ]; then
@@ -13,8 +14,30 @@ unset UNAME
 if [ "$(echo $DISTRO | awk '{print substr($0,0,6)}')" == "centos" ]; then
     export DISTRO=centos
 fi
+
+# OS Specific Operations
 if [ "$DISTRO" == "Ubuntu" ]; then
-    curl -L https://github.com/jamrizzi/bird/releases/download/v0.0.2/bird-ubuntu.tar.gz | tar zxv
+    apt-get update -y
+    apt-get install -y git curl
 elif [ "$DISTRO" == "centos" ]; then
-    curl -L https://github.com/jamrizzi/bird/releases/download/v0.0.2/bird-centos.tar.gz | tar zxv
+    yum update -y
+    yum install -y git curl
 fi
+
+# Universal Operations
+curl -L https://bootstrap.pypa.io/get-pip.py | python2.7
+git clone https://github.com/jamrizzi/bird.git
+
+# Python dependencies
+pip install future
+pip install ipgetter
+
+# Installation
+if [ "$2" == "master" ]; then
+    python2 ./bird/src/master.py
+elif [ "$2" == "node" ]; then
+    python2 ./bird/src/node.py
+fi
+
+# Cleanup
+rm -rf ./bird

@@ -25,6 +25,7 @@ def get_defaults():
         'master_domain': 'cloud.yourdomain.com',
         'metadata_service_id': '2',
         'cron_schedule': '0 0 * * *',
+        'metadata_mount': 'local',
         'backup_cloud_mount': 'local',
         'volumes_mount': 'local',
         'backup_volumes_mount': 'local',
@@ -34,22 +35,31 @@ def get_defaults():
 
 def gather_information(defaults):
     options = {}
-    options['email'] = helper.default_prompt('Email', defaults['email'], True)
-    options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'], True)
-    options['metadata_service_id'] = helper.default_prompt('Metadata Service ID', defaults['metadata_service_id'], True)
-    options['cron_schedule'] = helper.default_prompt('Cron Schedule', defaults['cron_schedule'], True)
-    options['backup_cloud_mount'] = helper.default_prompt('Backup Cloud Mount', defaults['backup_cloud_mount'], True)
-    options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'], True)
-    options['backup_volumes_mount'] = helper.default_prompt('Backup Volumes Mount', defaults['backup_volumes_mount'], True)
-    options['rancher_mysql_database'] = helper.default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'], True)
-    options['mysql_root_password'] = helper.default_prompt('MYSQL Root Password', defaults['mysql_root_password'], True)
+    options['email'] = helper.default_prompt('Email', defaults['email'])
+    options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'])
+    options['metadata_service_id'] = helper.default_prompt('Metadata Service ID', defaults['metadata_service_id'])
+    options['cron_schedule'] = helper.default_prompt('Cron Schedule', defaults['cron_schedule'])
+    options['metadata_mount'] = helper.default_prompt('Metadata Mount', defaults['metadata_mount'])
+    options['backup_cloud_mount'] = helper.default_prompt('Backup Cloud Mount', defaults['backup_cloud_mount'])
+    options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'])
+    options['backup_volumes_mount'] = helper.default_prompt('Backup Volumes Mount', defaults['backup_volumes_mount'])
+    options['rancher_mysql_database'] = helper.default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
+    options['mysql_root_password'] = helper.default_prompt('MYSQL Root Password', defaults['mysql_root_password'])
     return options
 
 def prepare_system():
     os.system('curl -L https://raw.githubusercontent.com/jamrizzi/beegfs-installer/master/scripts/download.sh | bash')
     if (platform.dist()[0] == 'centos'):
         os.system('''
-        yum install -y nfs-utils rpcbind
+        yum install -y nfs-utils
+        systemctl enable rpcbind
+        systemctl enable nfs-server
+        systemctl enable nfs-lock
+        systemctl enable nfs-idmap
+        systemctl start rpcbind
+        systemctl start nfs-server
+        systemctl start nfs-lock
+        systemctl start nfs-idmap
         ''')
     elif (platform.dist()[0] == 'Ubuntu'):
         os.system('apt-get install -y nfs-kernel-server')
@@ -88,6 +98,13 @@ def install_beegfs_management(options):
     os.system('beegfs-installer/management-install')
 
 def install_beegfs_metadata(options):
+    os.system('mkdir -p ' + mount_to)
+    if options['metadata_mount'] != 'local':
+        os.system('''
+        mkfs.ext4 -i 2048 -I 512 -J size=400 -Odir_index,filetype ''' + options['metadata_mount'] + '''
+        echo "''' + options['metadata_mount'] + ' ' +  mount_to + ''' ext4 defaults 0 2" | tee -a /etc/fstab
+        mount -a && mount
+        ''')
     os.system('''
     (echo ''' + options['master_domain'] + '''; \
     echo ''' + options['metadata_service_id'] + ''') | beegfs-installer/metadata-install
