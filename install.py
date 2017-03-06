@@ -2,6 +2,7 @@
 
 import os
 import sys
+import platform
 
 def main():
     if os.getuid() != 0:
