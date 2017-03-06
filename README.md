@@ -15,10 +15,10 @@ Docker is the contianer engine. Any application packaged as a docker container c
 ## Install
 ### Master
 ```sh
-curl -L https://raw.githubusercontent.com/jamrizzi/bird/master/install.sh | bash -s master
+curl -L https://raw.githubusercontent.com/jamrizzi/bird/master/install.py | python2 -s master
 ```
 
 ### Node
 ```sh
-curl -L https://raw.githubusercontent.com/jamrizzi/bird/master/install.sh | bash -s node
+curl -L https://raw.githubusercontent.com/jamrizzi/bird/master/install.py | python2 -s node
 ```
