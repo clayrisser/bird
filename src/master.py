@@ -28,7 +28,7 @@ def get_defaults():
         'metadata_mount': 'local',
         'backup_cloud_mount': 'local',
         'volumes_mount': 'local',
-        'backup_volumes_mount': 'local',
+        'volumes_backup_mount': 'local',
         'rancher_mysql_database': 'rancher',
         'mysql_root_password': 'hellodocker'
     }
@@ -42,7 +42,7 @@ def gather_information(defaults):
     options['metadata_mount'] = helper.default_prompt('Metadata Mount', defaults['metadata_mount'])
     options['backup_cloud_mount'] = helper.default_prompt('Backup Cloud Mount', defaults['backup_cloud_mount'])
     options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'])
-    options['backup_volumes_mount'] = helper.default_prompt('Backup Volumes Mount', defaults['backup_volumes_mount'])
+    options['volumes_backup_mount'] = helper.default_prompt('Backup Volumes Mount', defaults['volumes_backup_mount'])
     options['rancher_mysql_database'] = helper.default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
     options['mysql_root_password'] = helper.default_prompt('MYSQL Root Password', defaults['mysql_root_password'])
     return options
@@ -87,7 +87,7 @@ def install_rancher(options):
     (echo ''' + options['email'] + '''; \
     echo ''' + options['master_domain'] + '''; \
     echo ''' + options['volumes_mount'] + '''; \
-    echo ''' + options['backup_volumes_mount'] + '''; \
+    echo ''' + options['volumes_backup_mount'] + '''; \
     echo ''' + options['cron_schedule'] + '''; \
     echo ''' + options['rancher_mysql_database'] + '''; \
     echo ''' + options['mysql_root_password'] + ''') | sudo python2 install.py
