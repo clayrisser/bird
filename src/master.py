@@ -25,7 +25,6 @@ def get_defaults():
         'master_domain': 'cloud.yourdomain.com',
         'metadata_service_id': '2',
         'cron_schedule': '0 0 * * *',
-        'metadata_mount': 'local',
         'backup_cloud_mount': 'local',
         'volumes_mount': 'local',
         'volumes_backup_mount': 'local',
@@ -39,7 +38,6 @@ def gather_information(defaults):
     options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'])
     options['metadata_service_id'] = helper.default_prompt('Metadata Service ID', defaults['metadata_service_id'])
     options['cron_schedule'] = helper.default_prompt('Cron Schedule', defaults['cron_schedule'])
-    options['metadata_mount'] = helper.default_prompt('Metadata Mount', defaults['metadata_mount'])
     options['backup_cloud_mount'] = helper.default_prompt('Backup Cloud Mount', defaults['backup_cloud_mount'])
     options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'])
     options['volumes_backup_mount'] = helper.default_prompt('Backup Volumes Mount', defaults['volumes_backup_mount'])
@@ -97,13 +95,6 @@ def install_beegfs_management(options):
     os.system('curl -L -o beegfs.py http://bit.ly/2n5lDz5; sudo python2 beegfs.py management')
 
 def install_beegfs_metadata(options):
-    os.system('mkdir -p /mnt/beegfs-meta/')
-    if options['metadata_mount'] != 'local':
-        os.system('''
-        mkfs.ext4 -i 2048 -I 512 -J size=400 -Odir_index,filetype ''' + options['metadata_mount'] + '''
-        echo "''' + options['metadata_mount'] + ' ' + '/mnt/beegfs-meta/' + ''' ext4 defaults 0 2" | tee -a /etc/fstab
-        mount -a && mount
-        ''')
     os.system('''
     curl -L -o beegfs.py http://bit.ly/2n5lDz5;
     (echo ''' + options['master_domain'] + '''; \
