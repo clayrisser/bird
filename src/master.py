@@ -107,7 +107,7 @@ def install_beegfs_metadata(options):
     os.system('''
     curl -L -o beegfs.py http://bit.ly/2n5lDz5;
     (echo ''' + options['master_domain'] + '''; \
-    echo ''' + options['metadata_service_id'] + ''') | sudo python2 beegfs.py storage
+    echo ''' + options['metadata_service_id'] + ''') | sudo python2 beegfs.py metadata
     ''')
 
 def install_beegfs_admon(options):
