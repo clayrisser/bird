@@ -35,14 +35,14 @@ def get_defaults():
 
 def gather_information(defaults):
     options = {}
-    options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'], True)
-    options['node_ip'] = helper.default_prompt('Node IP', defaults['node_ip'], True)
-    options['registration_token'] = helper.default_prompt('Registration Token', defaults['registration_token'], True)
-    options['storage_service_id'] = helper.default_prompt('Storage Service ID', defaults['storage_service_id'], True)
-    options['storage_target_id'] = helper.default_prompt('Storage Target ID', defaults['storage_target_id'], True)
-    options['storage_mount'] = helper.default_prompt('Storage Mount', defaults['storage_mount'], True)
-    options['backup_mount'] = helper.default_prompt('Backup Mount', socket.gethostbyname(options['master_domain']) + ':/exports/cloud-backup', True)
-    options['max_map_count'] = helper.default_prompt('Max Map Count', defaults['max_map_count'], True)
+    options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'])
+    options['node_ip'] = helper.default_prompt('Node IP', defaults['node_ip'])
+    options['registration_token'] = helper.default_prompt('Registration Token', defaults['registration_token'])
+    options['storage_service_id'] = helper.default_prompt('Storage Service ID', defaults['storage_service_id'])
+    options['storage_target_id'] = helper.default_prompt('Storage Target ID', defaults['storage_target_id'])
+    options['storage_mount'] = helper.default_prompt('Storage Mount', defaults['storage_mount'])
+    options['backup_mount'] = helper.default_prompt('Backup Mount', socket.gethostbyname(options['master_domain']) + ':/exports/cloud-backup')
+    options['max_map_count'] = helper.default_prompt('Max Map Count', defaults['max_map_count'])
     return options
 
 def prepare_system():
