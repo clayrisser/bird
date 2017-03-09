@@ -73,7 +73,6 @@ def setup_backup_cloud(options):
     chmod 777 /exports/cloud-backup
     echo "/exports/cloud-backup    *(rw,sync,no_subtree_check)" | tee -a /etc/exports
     ''')
-    os.system('curl -L https://raw.githubusercontent.com/jamrizzi/beegfs-installer/master/scripts/download.sh | bash')
     if (platform.dist()[0] == 'centos'):
         os.system('exportfs -a')
     elif (platform.dist()[0] == 'Ubuntu'):
@@ -84,33 +83,37 @@ def setup_backup_cloud(options):
 
 def install_rancher(options):
     os.system('''
-    curl -L https://raw.githubusercontent.com/jamrizzi/rancher-ident/master/scripts/download.sh | bash
+    curl -L -o install.py http://bit.ly/2mCA8gw;
     (echo ''' + options['email'] + '''; \
     echo ''' + options['master_domain'] + '''; \
     echo ''' + options['volumes_mount'] + '''; \
     echo ''' + options['backup_volumes_mount'] + '''; \
     echo ''' + options['cron_schedule'] + '''; \
     echo ''' + options['rancher_mysql_database'] + '''; \
-    echo ''' + options['mysql_root_password'] + ''') | ./rancher-ident
+    echo ''' + options['mysql_root_password'] + ''') | sudo python2 install.py
     ''')
 
 def install_beegfs_management(options):
-    os.system('beegfs-installer/management-install')
+    os.system('curl -L -o beegfs.py http://bit.ly/2n5lDz5; sudo python2 beegfs.py management')
 
 def install_beegfs_metadata(options):
-    os.system('mkdir -p ' + mount_to)
+    os.system('mkdir -p /mnt/beegfs-meta/')
     if options['metadata_mount'] != 'local':
         os.system('''
         mkfs.ext4 -i 2048 -I 512 -J size=400 -Odir_index,filetype ''' + options['metadata_mount'] + '''
-        echo "''' + options['metadata_mount'] + ' ' +  mount_to + ''' ext4 defaults 0 2" | tee -a /etc/fstab
+        echo "''' + options['metadata_mount'] + ' ' + '/mnt/beegfs-meta/' + ''' ext4 defaults 0 2" | tee -a /etc/fstab
         mount -a && mount
         ''')
     os.system('''
+    curl -L -o beegfs.py http://bit.ly/2n5lDz5;
     (echo ''' + options['master_domain'] + '''; \
-    echo ''' + options['metadata_service_id'] + ''') | beegfs-installer/metadata-install
+    echo ''' + options['metadata_service_id'] + ''') | sudo python2 beegfs.py storage
     ''')
 
 def install_beegfs_admon(options):
-    os.system('(echo ' + options['master_domain'] + ') | beegfs-installer/admon-install')
+    os.system('''
+    curl -L -o beegfs.py http://bit.ly/2n5lDz5;
+    (echo ''' + options['master_domain'] + ''') | sudo python2 beegfs.py admon
+    ''')
 
 main()

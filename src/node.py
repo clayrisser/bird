@@ -13,7 +13,6 @@ def main():
     options = gather_information(get_defaults())
     helper.prepare()
     prepare_system()
-    mount_storage(options)
     mount_backup(options)
     install_docker()
     increase_max_map_count(options)
@@ -47,7 +46,6 @@ def gather_information(defaults):
     return options
 
 def prepare_system():
-    os.system('curl -L https://raw.githubusercontent.com/jamrizzi/beegfs-installer/master/scripts/download.sh | bash')
     if (platform.dist()[0] == 'centos'):
         os.system('yum install -y nfs-utils nfs-utils-lib')
     elif (platform.dist()[0] == 'Ubuntu'):
@@ -55,9 +53,6 @@ def prepare_system():
     else:
         print('Operating system not supported')
         sys.exit('Exiting installer')
-
-def mount_storage(options):
-    helper.mount(options['storage_mount'], '/mnt/myraid1')
 
 def mount_backup(options):
     helper.mount(options['backup_mount'], '/mnt/backup')
@@ -85,12 +80,17 @@ def connect_to_rancher(options):
 
 def install_storage_server(options):
     os.system('''
+    curl -L -o beegfs.py http://bit.ly/2n5lDz5;
     (echo ''' + options['master_domain'] + '''; \
     echo ''' + options['storage_service_id'] + '''; \
-    echo ''' + options['storage_target_id'] + ''') | beegfs-installer/storage-install
+    echo ''' + options['storage_target_id'] + '''; \
+    echo ''' + options['storage_mount'] + ''') | sudo python2 beegfs.py storage
     ''')
 
 def install_client_server(options):
-    os.system('(echo ' + options['master_domain'] + ') | beegfs-installer/client-install')
+    os.system('''
+    curl -L -o beegfs.py http://bit.ly/2n5lDz5;
+    (echo ''' + options['master_domain'] + ''') | sudo python2 beegfs.py client
+    ''')
 
 main()

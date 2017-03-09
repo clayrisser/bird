@@ -48,4 +48,5 @@ class Helper:
                 os.system('''
                 echo "''' + mount_from + ' ' + mount_to + ''' nfs auto 0 2" | tee -a /etc/fstab
                 mount -a && mount
+                chmod 777 ''' +  mount_to + '''
                 ''')
