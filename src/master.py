@@ -38,7 +38,7 @@ def gather_information(defaults):
     options['master_domain'] = helper.default_prompt('Master Domain', defaults['master_domain'])
     options['metadata_service_id'] = helper.default_prompt('Metadata Service ID', defaults['metadata_service_id'])
     options['cron_schedule'] = helper.default_prompt('Cron Schedule', defaults['cron_schedule'])
-    options['cloud_backup_mount'] = helper.default_prompt('Cloud Backup Mount', defaults['backup_cloud_mount'])
+    options['cloud_backup_mount'] = helper.default_prompt('Cloud Backup Mount', defaults['cloud_backup_mount'])
     options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'])
     options['volumes_backup_mount'] = helper.default_prompt('Volumes Backup Mount', defaults['volumes_backup_mount'])
     options['rancher_mysql_database'] = helper.default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
