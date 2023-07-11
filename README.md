@@ -3,6 +3,8 @@ A stack for managing a highly available cloud platform.
 
 bird stands for . . .
 
+![](assets/bird.png)
+
 ### [Beegfs](http://www.beegfs.com/)
 Beegfs is used to maintain persistent storage accross the stack.
 ### [Ident](https://github.com/jamrizzi/ident)
